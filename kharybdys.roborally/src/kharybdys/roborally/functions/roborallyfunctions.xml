@@ -1,0 +1,10 @@
+<functiondef>
+	<!-- Please keep this file in alfabetical order -->
+
+	<function name="Wait" class="kharybdys.roborally.functions.Wait">
+		<description>Wait for specified number of milliseconds</description>
+		<input>empty</input>
+		<result>empty</result>
+	</function>
+	
+</functiondef>

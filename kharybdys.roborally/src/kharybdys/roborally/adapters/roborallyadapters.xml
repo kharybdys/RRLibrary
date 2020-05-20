@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<adapterdef>
+    <require bundle="com.dexels.navajo.adapters"/>
+
+    <map>
+		<tagname>game</tagname>
+		<object>kharybdys.roborally.adapters.RoboRallyGameAdapter</object>
+		<values>
+			<value name="gameId" type="integer" required="true" direction="in" />
+			<value name="boardImage" type="binary" required="false" direction="out" />
+		</values>
+		<methods>
+			<method name="initializeGame">
+                <param name="initializeGame" field="doInitializeGame" type="boolean" required="automatic" value="true" />
+            </method>
+		</methods>
+	</map>
+
+</adapterdef>

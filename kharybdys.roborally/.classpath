@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/edtftpj.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxb-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jaxb-impl.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/gcm-server.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/json_simple-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/JavaPNS_2.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bcprov-jdk15on-148.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/java-string-similarity-1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-api-client-1.23.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-oauth-client-1.23.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-http-client-1.23.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/google-http-client-jackson2-1.23.0.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

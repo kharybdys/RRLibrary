@@ -94,7 +94,7 @@ public class MovementCard implements Comparable<MovementCard> {
             case TURNRIGHT: facingSteps=1; break;
             case UTURN: facingSteps=2; break;
         }
-        return Collections.nCopies(repeat, new Movement(getBot().getFacingDirection(), facingSteps, Movement.RoboRallyMovementPriority.ROBOT_MOVEMENT, movementSteps, priority));
+        return Collections.nCopies(repeat, new Movement(getBot().getFacingDirection(), facingSteps, Movement.RoboRallyMovementType.ROBOT_MOVEMENT, movementSteps, priority));
     }
     
     @Override

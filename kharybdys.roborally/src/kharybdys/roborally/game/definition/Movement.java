@@ -11,14 +11,15 @@ import kharybdys.util.Coordinates;
  *
  * @author MHK
  */
-public class Movement {
+public class Movement implements Comparable<Movement>
+{
 
 	private static final Logger logger = LoggerFactory.getLogger( Movement.class );
 
     /*
      * movementDirection needs to be not null when numberSquares isn't 0 and we want to process it.
      */
-    private RoboRallyMovementPriority priority;
+    private RoboRallyMovementType type;
     private Direction movementDirection;
     /*
      * positive is clockwise, negative is counterclockwise.
@@ -27,11 +28,15 @@ public class Movement {
     /*
      * Should never be greater than one, otherwise it needs to be represented by multiple movement objects.
      * Also assumed to be always positive.
+     * TODO: Refactor to a boolean, we either move or not
      */
     private int numberSquares;
-    private int numPriority;
+    
+    private int priority;
+    
+    private AbstractMovingElement movingElement = null;
 
-    public enum RoboRallyMovementPriority {
+    public enum RoboRallyMovementType {
 
         ROBOT_MOVEMENT,
         DUAL_SPEED_CONVEYOR,
@@ -41,12 +46,12 @@ public class Movement {
         NONE
     }
 
-    public Movement(Direction movementDirection, int facingSteps, RoboRallyMovementPriority priority, int numberSquares, int numPriority) {
-        this.priority = priority;
+    public Movement(Direction movementDirection, int facingSteps, RoboRallyMovementType type, int numberSquares, int priority) {
+        this.type = type;
         this.movementDirection = movementDirection;
         this.facingTurnSteps = facingSteps;
         this.numberSquares = numberSquares;
-        this.numPriority = numPriority;
+        this.priority = priority;
     }
 
     public Direction getNewFacingDirection(Direction oldFacingDirection)
@@ -54,21 +59,44 @@ public class Movement {
         return oldFacingDirection.processRotate(facingTurnSteps);
     }
 
-    public Movement adjustMovement()
-    { // outside has determined that we are bonking into a wall.
-    	logger.debug("Adjusted the movement");
-        this.numberSquares=0;
+    /**
+     * Changes this movement to no longer change position.
+     * Eg when we are bonking into a wall, or in a bot that cannot move itself.
+     * 
+     * @return the changed movement object
+     */
+    public Movement stopMovement()
+    {
+    	logger.debug("Stopped the movement");
+        this.numberSquares = 0;
         return this;
     }
+    
     public Direction getMovingDirection()
     {
         return movementDirection;
     }
-    public RoboRallyMovementPriority getPriority()
+    
+    public RoboRallyMovementType getType()
+    {
+        return type;
+    }
+
+    private int getPriority()
     {
         return priority;
     }
 
+    /**
+     * Whether this movement represents an actual change in position
+     * 
+     * @return Whether this movement represents an actual change in position
+     */
+    public boolean changesPosition()
+    {
+    	return numberSquares > 0;
+    }
+    
     public void updateXAndYCoords(AbstractMovingElement ame)
     {
         Coordinates resultingCoords = getResultingCoordinates(ame.getCoords());
@@ -91,4 +119,41 @@ public class Movement {
         }
         return new Coordinates(xChange + coords.getxCoord(), yChange + coords.getyCoord());
     }
+
+    /**
+     * The movingElement to which this movement applies
+     * TODO: Probably should be a required field so no separate setter, but in the constructor
+     * 
+     * @return The movingElement
+     */
+	public AbstractMovingElement getMovingElement() {
+		return movingElement;
+	}
+
+	/**
+	 * Sets the movingElement to which this movement applies
+	 * 
+	 * @param movingElement The movingElement to which this movement applies
+	 */
+	public void setMovingElement(AbstractMovingElement movingElement) {
+		this.movingElement = movingElement;
+	}
+
+	/**
+	 * Compares two movements based on type of movement first, then priority second
+	 */
+	@Override
+	public int compareTo( Movement m ) 
+	{
+		int typeComparison = type.compareTo( m.getType() ); 
+
+		if(  typeComparison == 0 )
+		{
+			return Integer.valueOf( priority ).compareTo( Integer.valueOf( m.getPriority() ) );
+		}
+		else
+		{
+			return typeComparison;
+		}
+	}
 }

@@ -65,7 +65,7 @@ public class RoboRallyGameAdapter implements Mappable {
 	public Binary getBoardImage() {
 //    	return new Binary( game.getBoardImage() );
 		try {
-			BufferedImage bi = Game.getPreviewImage(ImplementedScenario.DizzyDash, true, null, null, 4);
+			BufferedImage bi = Game.getPreviewImage(ImplementedScenario.Test, true, null, null, 4);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(bi, "png", baos);
 			return new Binary(baos.toByteArray());

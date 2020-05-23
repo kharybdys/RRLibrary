@@ -1,44 +1,57 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kharybdys.roborally.game.board;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
 
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
-import kharybdys.roborally.game.definition.Movement.RoboRallyMovementPriority;
 
 /**
- *
- * @author MHK
+ * Defines a Basic boardElement. These have no special logic but do have different styles of drawing
+ * TODO: Remove type Flag as that has its own class
  */
 public class BasicElement extends AbstractBoardElement {
-    // number will be used by types FLAG and STARTING and otherwise ignored.
+    // number will be used by type STARTING and otherwise ignored.
 
     private int number;
-    private BoardElementType type;
+    private BasicElementType type;
 
-    public BasicElement(int xCoord, int yCoord, List<Direction> walls, Direction laserMount, List<Direction> laserShot, int number, BoardElementType type) {
-        super(xCoord, yCoord, walls, laserMount, laserShot);
+    /**
+     * Constructor for a BasicElement
+     * Adds a number and a type
+     * 
+     * @param xCoord The xCoordinate of this boardElement
+     * @param yCoord The yCoordinate of this boardElement
+     * @param walls  The collection of directions that have walls on this boardElement
+     * @param number The number of this element (0 equals not used)
+     * @param type   The type of this BasicElement
+     */
+    public BasicElement(int xCoord, int yCoord, Collection<Direction> walls, int number, BasicElementType type) 
+    {
+        super( xCoord, yCoord, walls );
         this.number = number;
         this.type = type;
     }
 
-    public BasicElement(int xCoord, int yCoord, List<Direction> walls, Map<Direction, Integer> laserMount, Map<Direction, Integer> laserShot, int number, BoardElementType type) {
-        super(xCoord, yCoord, walls, laserMount, laserShot);
-        this.number = number;
-        this.type = type;
+    /**
+     * Constructor for a BasicElement
+     * Number not used, type is BASIC
+     * 
+     * @param xCoord The xCoordinate of this boardElement
+     * @param yCoord The yCoordinate of this boardElement
+     * @param walls  The collection of directions that have walls on this boardElement
+     */
+    public BasicElement(int xCoord, int yCoord, Collection<Direction> walls) 
+    {
+        super( xCoord, yCoord, walls );
+        this.number = 0;
+        this.type = BasicElementType.BASIC;
     }
 
-    @Override
-    public BoardElementType getBoardElementType() {
+	@Override
+    public BasicElementType getBoardElementType() {
         return type;
     }
 
@@ -46,21 +59,11 @@ public class BasicElement extends AbstractBoardElement {
         return number;
     }
 
-    public RoboRallyMovementPriority getMovementPriority()
+    @Override
+    public void paintElement(Graphics g, int baseX, int baseY, int factor) 
     {
-        return Movement.RoboRallyMovementPriority.NONE;
-    }
-
-    @Override
-    public Movement getBoardMovement(int phase) {
-        return new Movement(null, 0, RoboRallyMovementPriority.ROBOT_MOVEMENT, 0, 0);
-    }
-
-    @Override
-    public void paintElement(Graphics g, int baseX, int baseY, int factor) {
-        Font f = new Font(Font.SANS_SERIF, Font.PLAIN, size - (8 * factor));
+        Font f = new Font( Font.SANS_SERIF, Font.PLAIN, size - ( 8 * factor ) );
         String charToDraw = "";
-        int xAdjustment = 4 * factor;
         switch (type) {
             case STARTING:
                 g.setColor(Color.black);
@@ -72,14 +75,12 @@ public class BasicElement extends AbstractBoardElement {
                 g.setColor(Color.darkGray);
                 g.fillRect(baseX + (3 * factor), baseY + (3 * factor), size - (6 * factor), size - (6 * factor));
                 g.setColor(Color.white);
-                xAdjustment -= factor;
                 break;
             case OPTION:
                 charToDraw = "O";
                 g.setColor(Color.darkGray);
                 g.fillRect(baseX + (3 * factor), baseY + (3 * factor), size - (6 * factor), size - (6 * factor));
                 g.setColor(Color.white);
-                xAdjustment -= factor;
                 break;
             case HOLE:
                 g.setColor(Color.black);
@@ -91,9 +92,9 @@ public class BasicElement extends AbstractBoardElement {
         if (charToDraw.length() > 0) {
             g.setFont(f);
             FontMetrics fm = g.getFontMetrics();
-            int xCorr = (size - 8*factor - fm.stringWidth(charToDraw))/2;
-            int yCorr = (size - 8*factor - fm.getMaxAscent()+fm.getMaxDescent())/2;
-            g.drawString(charToDraw, baseX + 4 * factor + xCorr, baseY + size - 4 * factor -yCorr);
+            int xCorr = ( size - 8 * factor - fm.stringWidth( charToDraw ) ) / 2;
+            int yCorr = ( size - 8 * factor - fm.getMaxAscent() + fm.getMaxDescent() ) / 2;
+            g.drawString( charToDraw, baseX + 4 * factor + xCorr, baseY + size - 4 * factor - yCorr );
         }
     }
 }

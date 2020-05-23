@@ -3,9 +3,9 @@ package kharybdys.roborally.game;
 import java.awt.*;
 
 import kharybdys.roborally.game.board.AbstractMovingElement;
+import kharybdys.roborally.game.board.BoardElement;
 import kharybdys.roborally.game.definition.Direction;
 import kharybdys.roborally.game.definition.Movement;
-import kharybdys.util.Utils;
 
 /**
  *
@@ -137,19 +137,19 @@ public class Bot extends AbstractMovingElement {
         g.setColor(new Color(255, 0, 255, 255));
         switch (facingDirection) {
             case NORTH:
-                g.fillPolygon(Utils.createTriangle(baseX, baseY + size / 2, baseX + size, baseY + size / 2, baseX + size / 2, baseY));
+                g.fillPolygon(BoardElement.createTriangle(baseX, baseY + size / 2, baseX + size, baseY + size / 2, baseX + size / 2, baseY));
                 g.fillRect(baseX, baseY + size / 2, size, size / 2);
                 break;
             case SOUTH:
-                g.fillPolygon(Utils.createTriangle(baseX, baseY + size / 2, baseX + size, baseY + size / 2, baseX + size / 2, baseY + size));
+                g.fillPolygon(BoardElement.createTriangle(baseX, baseY + size / 2, baseX + size, baseY + size / 2, baseX + size / 2, baseY + size));
                 g.fillRect(baseX, baseY, size, size / 2);
                 break;
             case WEST:
-                g.fillPolygon(Utils.createTriangle(baseX + size / 2, baseY, baseX + size / 2, baseY + size, baseX, baseY + size / 2));
+                g.fillPolygon(BoardElement.createTriangle(baseX + size / 2, baseY, baseX + size / 2, baseY + size, baseX, baseY + size / 2));
                 g.fillRect(baseX + size / 2, baseY, size / 2, size);
                 break;
             case EAST:
-                g.fillPolygon(Utils.createTriangle(baseX + size / 2, baseY, baseX + size / 2, baseY + size, baseX + size, baseY + size / 2));
+                g.fillPolygon(BoardElement.createTriangle(baseX + size / 2, baseY, baseX + size / 2, baseY + size, baseX + size, baseY + size / 2));
                 g.fillRect(baseX, baseY, size / 2, size);
                 break;
         }

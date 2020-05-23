@@ -84,7 +84,7 @@ public class Flag extends AbstractMovingElement {
     public void processMovement(Movement rrm)
     {
         // flags can only be moved by board movement:
-        if (rrm.getPriority() != Movement.RoboRallyMovementPriority.ROBOT_MOVEMENT)
+        if (rrm.getType() != Movement.RoboRallyMovementType.ROBOT_MOVEMENT)
         {
             rrm.updateXAndYCoords(this);
         }

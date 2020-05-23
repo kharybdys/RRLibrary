@@ -16,6 +16,7 @@ import kharybdys.roborally.game.board.AbstractMovingElement;
 import kharybdys.roborally.game.board.BasicElement;
 import kharybdys.roborally.game.board.Board;
 import kharybdys.roborally.game.board.BoardElement;
+import kharybdys.roborally.game.board.BasicElementType;
 import kharybdys.roborally.game.board.ImplementedScenario;
 import kharybdys.roborally.game.definition.Direction;
 import kharybdys.util.Coordinates;
@@ -204,7 +205,7 @@ public class Game {
                     BoardElement element = board.getElement(i, j);
                     if (element instanceof BasicElement)
                     {
-                        if(AbstractBoardElement.BoardElementType.STARTING.equals(element.getBoardElementType()) && number==(((BasicElement) element).getNumber()))
+                        if(BasicElementType.STARTING.equals(element.getBoardElementType()) && number==(((BasicElement) element).getNumber()))
                         {
                             found=true;
                             x = board.getxOffset()+i;
@@ -259,44 +260,6 @@ public class Game {
         }
     }
 
-
-    public void processDamageFromWallLaserForBot(Bot beingShot)
-    {
-        BoardElement startingElement = beingShot.getBoardElement();
-        List<Direction> laserFire = startingElement.getDirectionLaserFire();
-        if (laserFire != null && !laserFire.isEmpty())
-        {
-            for (Direction directionLaserFire : laserFire)
-            { // directionLaserFire is the direction the laser fire is coming from.
-              // thus we check if there isn't another bot in that direction. Checking should stop at wall or mount (typically both exist at the same spot)
-                Coordinates currentCoords = beingShot.getCoords();
-                BoardElement currentElement = getBoardElement(currentCoords);
-                Boolean hit = true;
-                while (hit && !currentElement.existsLaserMount(directionLaserFire) && !currentElement.hasWall(directionLaserFire))
-                {
-                    // do we have a bot instead (unequal to beingShot)?
-                    Bot blockingBot = getBotOn(currentCoords);
-                    if (blockingBot != null && !blockingBot.equals(beingShot))
-                    {
-                        hit = false; // blockingBot takes the hit
-                    }
-                    // move one element in that direction
-                    currentCoords = currentCoords.getNeighbouringCoordinates(directionLaserFire);
-                    if (outOfBounds(currentCoords))
-                    {
-                        logger.error("Problem at board design, wall laser going off the board at coords " + currentCoords);
-                        throw new RuntimeException("Board design problem, wall laser going off the board.");
-                    }
-                    currentElement = getBoardElement(currentCoords);
-                }
-                if (hit)
-                {
-                    beingShot.setDamage(beingShot.getDamage() + startingElement.getLaserDamage(directionLaserFire));
-                    logger.info("Bot " + beingShot + " just took " + startingElement.getLaserDamage(directionLaserFire) + " damage from " + directionLaserFire + " direction.");
-                }
-            }
-        }
-    }
 
 	public Collection<AbstractMovingElement> getBotsAndFlags() {
         List<AbstractMovingElement> botsAndFlags = new ArrayList<AbstractMovingElement>();

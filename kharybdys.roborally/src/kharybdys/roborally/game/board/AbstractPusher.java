@@ -5,55 +5,79 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.List;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Collections;
 
 import kharybdys.roborally.game.definition.Direction;
 import kharybdys.roborally.game.definition.Movement;
-import kharybdys.roborally.game.definition.Movement.RoboRallyMovementPriority;
+import kharybdys.roborally.game.definition.Movement.RoboRallyMovementType;
 
 /**
- *
- * @author MHK
+ * Class representing an AbstractPusher. Only part missing is the phases this pusher applies to
  */
 public abstract class AbstractPusher extends AbstractBoardElement {
 
     protected Direction pusherDirection;
     protected String pusherText;
-    protected List<Integer> pusherPhases;
+    protected Collection<Integer> pusherPhases;
 
-    public AbstractPusher(int xCoord, int yCoord, List<Direction> walls, Direction laserMount, List<Direction> laserShot, Direction pusherDirection) {
-        super(xCoord, yCoord, walls, laserMount, laserShot);
-        this.pusherDirection=pusherDirection;
-    }
-
-    public AbstractPusher(int xCoord, int yCoord, List<Direction> walls, Map<Direction, Integer> laserMount, Map<Direction, Integer> laserShot, Direction pusherDirection) {
-        super(xCoord, yCoord, walls, laserMount, laserShot);
-        this.pusherDirection=pusherDirection;
-    }
-
-    public RoboRallyMovementPriority getMovementPriority()
+    /**
+     * Basic constructor for any pusher
+     * Adds pusherDirection onto the basic boardelement
+     * 
+     * @param xCoord          The xCoordinate of this boardElement
+     * @param yCoord          The yCoordinate of this boardElement
+     * @param walls           The collection of directions that have walls on this boardElement
+     * @param pusherDirection The direction this pusher pushes towards
+     */
+    public AbstractPusher( int xCoord, int yCoord, Collection<Direction> walls, Direction pusherDirection ) 
     {
-        return Movement.RoboRallyMovementPriority.PUSHER;
+        super( xCoord, yCoord, walls );
+        this.pusherDirection = pusherDirection;
     }
 
-    public Movement getBoardMovement(int phase) {
-        if (pusherPhases.contains(phase)) {
-            return new Movement(pusherDirection, 0, RoboRallyMovementPriority.PUSHER, 1, 0);
-        } else {
-            return null;
+    /**
+     * Get the basic movement that this board element enacts on the bot in the given phase.
+     * 
+     * @param phase The phase we're interested in
+     * 
+     * @return a (possibly empty) collection of Movement objects representing the boardMovement 
+     *         as applied to all movingElements currently on this boardElement
+     */
+    public Collection<Movement> getBoardMovements( int phase ) 
+    {
+        if ( pusherPhases.contains( phase ) ) 
+        {
+            return Collections.singletonList( new Movement( pusherDirection, 0, RoboRallyMovementType.PUSHER, 1, 0 ) );
+        } 
+        else 
+        {
+            return Collections.emptyList();
         }
     }
 
+    /**
+     * Helper method to execute extra actions for turning this boardElement 
+     * the given number of steps in the clockwise direction
+     * 
+     * @param turnSteps The number of steps to turn
+     */
     @Override
-    public AbstractPusher turn(int turnSteps, int newX, int newY)
+    protected void performTurn( int turnSteps ) 
     {
-        super.turn(turnSteps, newX, newY);
-        pusherDirection = pusherDirection==null ? null : pusherDirection.processRotate(turnSteps);
-        return this;
+        pusherDirection = pusherDirection == null ? null : pusherDirection.processRotate( turnSteps );
     }
 
-    public void paintElement(Graphics g, int baseX, int baseY, int factor) {
+    /**
+     * Paints the special features of a pusher
+     * 
+     * @param g
+     * @param baseX
+     * @param baseY
+     * @param factor
+     */
+    public void paintElement( Graphics g, int baseX, int baseY, int factor ) 
+    {
         Graphics2D g2d = (Graphics2D) g;
         int fontHeight = (size - (8 * factor)) / 2;
         int width = size - 2;

@@ -5,9 +5,9 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import kharybdys.roborally.game.board.AbstractBoardElement;
 import kharybdys.roborally.game.board.AbstractMovingElement;
 import kharybdys.roborally.game.board.BoardElement;
+import kharybdys.roborally.game.board.BasicElementType;
 import kharybdys.roborally.game.definition.Movement;
 import kharybdys.roborally.game.definition.MovementCardDefinition;
 import kharybdys.util.Coordinates;
@@ -141,13 +141,13 @@ public class RulesEngine {
                 }
                 // check for repair or option site to repair
                 BoardElement currentElement = bot.getBoardElement();
-                if (currentElement.getBoardElementType().equals(AbstractBoardElement.BoardElementType.REPAIR)
-                        || currentElement.getBoardElementType().equals(AbstractBoardElement.BoardElementType.OPTION))
+                if (currentElement.getBoardElementType().equals(BasicElementType.REPAIR)
+                        || currentElement.getBoardElementType().equals(BasicElementType.OPTION))
                 {
                     //TODO: Verify repair works
                     logger.info("Current bot is repairing: " + bot);
                     bot.setDamage(Math.max(0, bot.getDamage()-1));
-                    if (currentElement.getBoardElementType().equals(AbstractBoardElement.BoardElementType.OPTION))
+                    if (currentElement.getBoardElementType().equals(BasicElementType.OPTION))
                     {
                         //TODO: Verify option check works. Also verify it is supposed to be here.
                         logger.info("Current bot is on an option site but this is not implemented (yet): " + bot);
@@ -158,12 +158,12 @@ public class RulesEngine {
         // process boardmovement in parts:
         // process conveyor belts
         processBoardElementMovementForDualSpeedConveyor(g, phase);
-        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementPriority.SINGLE_SPEED_CONVEYOR);
+        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementType.SINGLE_SPEED_CONVEYOR);
         // did conveyors cause bots to push other bots?
         // process rotators
-        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementPriority.ROTATOR);
+        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementType.ROTATOR);
         // process pushers
-        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementPriority.PUSHER);
+        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementType.PUSHER);
         processLasers(g);
     }
 
@@ -176,11 +176,18 @@ public class RulesEngine {
         //TODO: Verify that wall lasers don't hit if the bot already died from bot lasers.
         for (Bot beingShot : g.getBots())
         {
-            g.processDamageFromWallLaserForBot(beingShot);
+        	
         }
 
     }
 
+    /**
+     *    TODO: Remove the parameter AbstractMovingElement as we can get that from the movement
+     * @param g
+     * @param ame
+     * @param movement
+     * @return
+     */
     public static Movement processAbstractMovingElementMovement(Game g, AbstractMovingElement ame, Movement movement) {
         BoardElement currentElement = ame.getBoardElement();
         // wall check
@@ -194,7 +201,7 @@ public class RulesEngine {
         // we can have moved so update the element we are on.
         currentElement = ame.getBoardElement();
         // pit check
-        if (currentElement.getBoardElementType().equals(AbstractBoardElement.BoardElementType.HOLE))
+        if (currentElement.getBoardElementType().equals(BasicElementType.HOLE))
         {
             logger.info("Current bot or flag just fell of the board or into a pit: " + ame);
             ame.processDeath();
@@ -216,8 +223,8 @@ public class RulesEngine {
     public static void processBoardElementMovementForDualSpeedConveyor(Game g, int phase)
     {
         // we might be moved onto another dual speed so call it twice.
-        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementPriority.DUAL_SPEED_CONVEYOR);
-        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementPriority.DUAL_SPEED_CONVEYOR);
+        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementType.DUAL_SPEED_CONVEYOR);
+        processBoardElementMovementForPriority(g, phase, Movement.RoboRallyMovementType.DUAL_SPEED_CONVEYOR);
     }
 
     //TODO: Test pusher board movement
@@ -225,35 +232,27 @@ public class RulesEngine {
     //TODO: Test conveyor then pusher board movement
     //TODO: Test pusher then rotator board movement (shouldn't rotate)
     //TODO: Test pusher then conveyor board movement (shouldn't move on the conveyor)
-    public static void processBoardElementMovementForPriority(Game g, int phase, Movement.RoboRallyMovementPriority priority)
+    public static void processBoardElementMovementForPriority(Game g, int phase, Movement.RoboRallyMovementType priority)
     {
+    	List<Movement> boardMovements = new ArrayList<Movement>();
+    	
         Collection<AbstractMovingElement> botsAndFlags = g.getBotsAndFlags();
-        for (AbstractMovingElement ame : botsAndFlags)
+        for (AbstractMovingElement movingElement : botsAndFlags)
         {
-            if (!ame.getDiedThisTurn() && ame.getLives() >= 0)
+            if (!movingElement.getDiedThisTurn() && movingElement.getLives() >= 0)
             {
-                BoardElement currentElement = ame.getBoardElement();
-                if (currentElement.getMovementPriority().equals(priority))
-                {
-                    // move this bot or flag
-                    Movement movement = currentElement.getBoardMovement(phase);
-                    if (movement != null)
-                    {
-                        processAbstractMovingElementMovement(g, ame, movement);
-                        currentElement = ame.getBoardElement();
-                        // to prevent NPE. Also, if it's null there is nothing to correct anyways.
-                        if (movement.getMovingDirection() != null)
-                        {
-                            Movement correctingMovement = currentElement.correctingMovementAfter(movement.getMovingDirection().processRotate(2));
-                            if (correctingMovement != null)
-                            {
-                                logger.info("Performing correcting movement on bot or flag " + ame);
-                                processAbstractMovingElementMovement(g, ame, correctingMovement);
-                            }
-                        }
-                    }
-                }
+            	Collection<Movement> tempMovements = movingElement.getBoardElement().getBoardMovements( phase );
+            	tempMovements.forEach( (movement) -> movement.setMovingElement( movingElement ) );
+            	boardMovements.addAll( tempMovements );
             }
         }
+    	Collections.sort( boardMovements );
+    	
+    	for( Movement movement : boardMovements )
+    	{
+    		AbstractMovingElement movingElement = movement.getMovingElement();
+    		
+            processAbstractMovingElementMovement(g, movingElement, movement);
+    	}
     }
 }

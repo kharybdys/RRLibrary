@@ -4,59 +4,36 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.util.Collection;
-
-import kharybdys.roborally.game.definition.Direction;
 
 /**
  * Defines a Basic boardElement. These have no special logic but do have different styles of drawing
- * TODO: Remove type Flag as that has its own class
  */
 public class BasicElement extends AbstractBoardElement {
-    // number will be used by type STARTING and otherwise ignored.
 
-    private int number;
-    private BasicElementType type;
+	private BasicElementType type = BasicElementType.BASIC;
 
     /**
-     * Constructor for a BasicElement
-     * Adds a number and a type
+     * Adds the basic element type to this board element
      * 
-     * @param xCoord The xCoordinate of this boardElement
-     * @param yCoord The yCoordinate of this boardElement
-     * @param walls  The collection of directions that have walls on this boardElement
-     * @param number The number of this element (0 equals not used)
-     * @param type   The type of this BasicElement
+     * @param type The type to add
+     * 
+     * @return this object, for chaining
      */
-    public BasicElement(int xCoord, int yCoord, Collection<Direction> walls, int number, BasicElementType type) 
+    public BasicElement withBasicElementType( BasicElementType type )
     {
-        super( xCoord, yCoord, walls );
-        this.number = number;
-        this.type = type;
+    	this.type = type;
+
+    	return this;
     }
 
     /**
-     * Constructor for a BasicElement
-     * Number not used, type is BASIC
+     * Returns the type of the boardElement (mostly for checking if it's a hole).
      * 
-     * @param xCoord The xCoordinate of this boardElement
-     * @param yCoord The yCoordinate of this boardElement
-     * @param walls  The collection of directions that have walls on this boardElement
+     * @return The type of this boardElement
      */
-    public BasicElement(int xCoord, int yCoord, Collection<Direction> walls) 
-    {
-        super( xCoord, yCoord, walls );
-        this.number = 0;
-        this.type = BasicElementType.BASIC;
-    }
-
 	@Override
     public BasicElementType getBoardElementType() {
         return type;
-    }
-
-    public int getNumber() {
-        return number;
     }
 
     @Override
@@ -64,23 +41,29 @@ public class BasicElement extends AbstractBoardElement {
     {
         Font f = new Font( Font.SANS_SERIF, Font.PLAIN, size - ( 8 * factor ) );
         String charToDraw = "";
-        switch (type) {
-            case STARTING:
+        switch (type) 
+        {
+            case STARTING_1:
+            case STARTING_2:
+            case STARTING_3:
+            case STARTING_4:
+            case STARTING_5:
+            case STARTING_6:
+            case STARTING_7:
+            case STARTING_8:
+                charToDraw = type.getNumber() + "";
                 g.setColor(Color.black);
-                charToDraw = number + "";
                 g.drawOval(baseX + (3 * factor), baseY + (3 * factor), size - (6 * factor), size - (6 * factor));
                 break;
             case REPAIR:
                 charToDraw = "R";
                 g.setColor(Color.darkGray);
                 g.fillRect(baseX + (3 * factor), baseY + (3 * factor), size - (6 * factor), size - (6 * factor));
-                g.setColor(Color.white);
                 break;
             case OPTION:
                 charToDraw = "O";
                 g.setColor(Color.darkGray);
                 g.fillRect(baseX + (3 * factor), baseY + (3 * factor), size - (6 * factor), size - (6 * factor));
-                g.setColor(Color.white);
                 break;
             case HOLE:
                 g.setColor(Color.black);
@@ -88,8 +71,11 @@ public class BasicElement extends AbstractBoardElement {
 /*                g.setColor(Color.black);
                 g.fillRect(baseX + 1+factor, baseY + 1+factor, size - 2-2*factor, size - 2-2*factor);*/
                 break;
+		default:
+			break;
         }
         if (charToDraw.length() > 0) {
+            g.setColor(Color.white);
             g.setFont(f);
             FontMetrics fm = g.getFontMetrics();
             int xCorr = ( size - 8 * factor - fm.stringWidth( charToDraw ) ) / 2;

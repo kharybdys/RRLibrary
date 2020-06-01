@@ -23,20 +23,28 @@ public abstract class AbstractConveyor extends AbstractBoardElement
     protected final static Color BACKGROUND_COLOR = Color.black;
 
     /**
-     * Basic constructor for a conveyor belt
-     * Adds startingDirections and endDirection to the AbstractBoardElement implementation.
+     * Setup method, defines the startingDirections
      * 
-     * @param xCoord             The xCoordinate of this boardElement
-     * @param yCoord             The yCoordinate of this boardElement
-     * @param walls              The collection of directions that have walls on this boardElement
-     * @param startingDirections The collection of directions from which this conveyor belt comes TODO: decide whether to derive instead of specify
-     * @param endDirection       The direction this conveyor belt exits to
+     * @param startingDirections
+     * @return
      */
-    public AbstractConveyor( int xCoord, int yCoord, Collection<Direction> walls, Collection<Direction> startingDirections, Direction endDirection ) 
+    public AbstractConveyor withStartingDirections( Collection<Direction> startingDirections )
     {
-        super( xCoord, yCoord, walls );
-        this.startingDirections = startingDirections;
-        this.endDirection = endDirection;
+    	this.startingDirections = startingDirections;
+    	
+    	return this;
+    }
+
+    /**
+     * Setup method, defines the endDirection
+     * @param endDirection
+     * @return
+     */
+    public AbstractConveyor withEndDirection( Direction endDirection )
+    {
+    	this.endDirection = endDirection;
+    	
+    	return this;
     }
 
     /**

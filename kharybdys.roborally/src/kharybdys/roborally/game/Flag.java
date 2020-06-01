@@ -9,20 +9,16 @@ import kharybdys.roborally.game.board.AbstractMovingElement;
 import kharybdys.roborally.game.definition.Movement;
 
 /**
- *
- * @author MHK
+ * Models a flag
  */
 public class Flag extends AbstractMovingElement {
-    private Integer id;
-    private Game game;
+    private Integer id = 0;
+    private Game game = null;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public Flag( Integer orderNumber ) 
+    {
+		super( orderNumber );
+	}
 
     @Override
     public Game getGame() {
@@ -34,38 +30,14 @@ public class Flag extends AbstractMovingElement {
         this.game = game;
     }
 
-    @Override
-    public AbstractMovingElement getArchiveObject() {
-        return null;  //Flags cannot have an archive object
-    }
-
-    @Override
-    public void setArchiveObject(AbstractMovingElement ame) {
-        //Flags cannot have an archive object
-    }
-
-    @Override
-    public Integer getLives() {
-        return 3;
-    }
-
-    @Override
-    public void setLives(Integer lives) {
-        //Do nothing, flags do not have lives
-    }
-
-
-    public static Flag getFlag(int xCoord, int yCoord, int number)
+    public void processDeath()
     {
-        Flag flag = new Flag();
-        flag.setArchiveXCoord(xCoord);
-        flag.setArchiveYCoord(yCoord);
-        flag.setOrderNumber(number);
-        flag.setxCoord(xCoord);
-        flag.setyCoord(yCoord);
-        return flag;
-    }
+        super.processDeath();
 
+		currentLocation.setFlag( null );
+		currentLocation = null;
+    }
+    
     @Override
     public void paintElement(Graphics g, int baseX, int baseY, int size, int factor)
     {

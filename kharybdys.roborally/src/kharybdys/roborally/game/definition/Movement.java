@@ -8,8 +8,7 @@ import kharybdys.roborally.game.board.AbstractMovingElement;
 import kharybdys.util.Coordinates;
 
 /**
- *
- * @author MHK
+ *  Class encapsulating movement of anything. This is either one step or a turn or a combination of both
  */
 public class Movement implements Comparable<Movement>
 {
@@ -36,7 +35,8 @@ public class Movement implements Comparable<Movement>
     
     private AbstractMovingElement movingElement = null;
 
-    public enum RoboRallyMovementType {
+    public enum RoboRallyMovementType 
+    {
 
         ROBOT_MOVEMENT,
         DUAL_SPEED_CONVEYOR,
@@ -46,12 +46,18 @@ public class Movement implements Comparable<Movement>
         NONE
     }
 
-    public Movement(Direction movementDirection, int facingSteps, RoboRallyMovementType type, int numberSquares, int priority) {
+    public Movement( Direction movementDirection, int turnSteps, RoboRallyMovementType type, int numberSquares, int priority ) 
+    {
         this.type = type;
         this.movementDirection = movementDirection;
-        this.facingTurnSteps = facingSteps;
+        this.facingTurnSteps = turnSteps;
         this.numberSquares = numberSquares;
         this.priority = priority;
+    }
+
+    public Movement( Direction movementDirection, int turnSteps, int numberSquares, int priority ) 
+    {
+        this( movementDirection, turnSteps, RoboRallyMovementType.ROBOT_MOVEMENT, numberSquares, priority );
     }
 
     public Direction getNewFacingDirection(Direction oldFacingDirection)
@@ -99,8 +105,7 @@ public class Movement implements Comparable<Movement>
     
     public void updateXAndYCoords(AbstractMovingElement ame)
     {
-        Coordinates resultingCoords = getResultingCoordinates(ame.getCoords());
-        ame.setCoords(resultingCoords);
+    	// TODO
     }
 
     public Coordinates getResultingCoordinates(Coordinates coords)

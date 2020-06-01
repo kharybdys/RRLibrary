@@ -2,13 +2,12 @@ package kharybdys.roborally.game.board;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,7 +35,7 @@ public abstract class AbstractBoardElement implements BoardElement
     /**
      * The collection of walls
      */
-    private Collection<Direction> walls;
+    private Collection<Direction> walls = EnumSet.noneOf( Direction.class );
 
     /**
      * The bot currently at this boardelement
@@ -54,19 +53,19 @@ public abstract class AbstractBoardElement implements BoardElement
     private Collection<Laser> lasers = new ArrayList<Laser>();
     
     /**
-     * The boardelements that surround us. May be null
+     * The boardelements that surround us.
      */
-    private Map<Direction, BoardElement> neighbours = new HashMap<Direction, BoardElement>();
+    private Map<Direction, BoardElement> neighbours = new EnumMap<Direction, BoardElement>( Direction.class );
     
     /**
      * The xCoordinate of this element
      */
-    protected int xCoord;
+    protected int xCoord = -1;
     
     /**
      * The yCoordinate of this element
      */
-    protected int yCoord;
+    protected int yCoord = -1;
     
     /**
      * How big to draw this boardElement (pixels by pixels)
@@ -74,32 +73,70 @@ public abstract class AbstractBoardElement implements BoardElement
     protected int size;
 
     /**
-     * Basic constructor for any given boardElement
-     * Initializes coordinates and walls
+     * Setup method, adds all directions in the given collection
      * 
-     * @param xCoord The xCoordinate of this boardElement
-     * @param yCoord The yCoordinate of this boardElement
-     * @param walls  The collection of directions that have walls on this boardElement
+     * @param walls The direction(s) of the wall(s)
+     * 
+     * @return this object, for chaining
      */
-    public AbstractBoardElement( int xCoord, int yCoord, Collection<Direction> walls )
+    public AbstractBoardElement withWalls( Collection<Direction> walls )
     {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
-        this.walls = walls;
-        if (this.walls == null) {
-            this.walls = new ArrayList<Direction>();
-        }
+    	this.walls.addAll( walls );
+    	
+    	return this;
+    }
+    
+    /**
+     * Setup method, adds/sets the coordinates
+     * 
+     * @param xCoord The xCoordinate
+     * @param yCoord The yCoordinate
+     * 
+     * @return this object, for chaining
+     */
+    public AbstractBoardElement withCoordinates( int xCoord, int yCoord )
+    {
+    	this.xCoord = xCoord;
+    	this.yCoord = yCoord;
+    	
+    	return this;
     }
     
     /**
      * Setup method, adds a boardElement in the given direction as neighbour
+     * Also adds us to the neighbour's neighbour list in the opposite direction
      * 
      * @param direction The direction to add the given boardElement to
      * @param neighbour The boardElement to add
      */
     public void addNeighbour( Direction direction, BoardElement neighbour )
     {
-    	neighbours.put( direction, neighbour );
+    	if( ! neighbour.equals( neighbours.get( direction ) ) )
+    	{
+    		// cleanup the current neighbour?
+    		removeNeighbour( direction );
+    		
+    		// Add the neighbour relations
+	    	neighbours.put( direction, neighbour );
+	    	neighbour.addNeighbour( direction.processRotate( 2 ), this );
+    	}
+    }
+    
+    /**
+     * Setup method, removes the neighbour in the given direction.
+     * Also removes us from the neighbour's neighbour list in the opposite direction
+     * 
+     * @param direction The direction to remove
+     */
+    public void removeNeighbour( Direction direction )
+    {
+    	BoardElement neighbour = neighbours.get( direction );
+    	if( neighbour != null )
+    	{
+    		neighbours.remove( direction );
+    		neighbour.removeNeighbour( direction.processRotate( 2 ) );
+    		
+    	}
     }
     
     /**
@@ -123,10 +160,35 @@ public abstract class AbstractBoardElement implements BoardElement
     	}
     	
     	lasers.add( new Laser( strength, originating, preceding, followup ) );
+    	
+    	if( followup != null )
+    	{
+    		followup.addLaser( strength, originating, this );
+    	}
     }
 
-    /**
-     * Gets the neighbour in the given direction. Always returns a boardElement
+	/**
+	 * Returns the X Coordinate of this boardElement
+	 * 
+	 * @return the X Coordinate
+	 */
+	public int getXCoordinate()
+	{
+		return xCoord;
+	}
+
+	/**
+	 * Returns the Y Coordinate of this boardElement
+	 * 
+	 * @return the Y Coordinate
+	 */
+	public int getYCoordinate()
+	{
+		return yCoord;
+	}
+
+	/**
+     * Gets the neighbour in the given direction. Always returns a boardElement TODO: Currently doesn't
      * 
      * @param direction The direction for which to return the neighbour
      * 
@@ -134,7 +196,20 @@ public abstract class AbstractBoardElement implements BoardElement
      */
     public BoardElement getNeighbour( Direction direction )
     {
-    	return neighbours.containsKey( direction ) ? neighbours.get( direction ) : outsideElement;
+//    	return neighbours.containsKey( direction ) ? neighbours.get( direction ) : outsideElement;
+    	return neighbours.get( direction );
+    }
+    
+    /**
+     * Gets the neighbour in the given direction. Will return null if no element is specified
+     * 
+     * @param direction The direction for which to return a neighbour
+     * 
+     * @return The neighbour at that direction, or null if none present
+     */
+    protected BoardElement getInternalNeighbour( Direction direction )
+    {
+    	return neighbours.get( direction );
     }
     
     /**
@@ -179,7 +254,6 @@ public abstract class AbstractBoardElement implements BoardElement
 
     /**
      * Returns the type of the boardElement (mostly for checking if it's a hole).
-     * TODO: Check if this is only for checking whether it's a hole, in that case change it to "killsBot" or such
      * 
      * @return The type of this boardElement
      */
@@ -188,49 +262,6 @@ public abstract class AbstractBoardElement implements BoardElement
         return BasicElementType.BASIC;
     }
     
-    /**
-     * Turn a copy of this board element turned the number of steps in the clockwise direction
-     * Assumes turning is done before laser logic is applied
-     * 
-     * @param turnSteps The number of steps to turn
-     * @param newX      The new x coordinate
-     * @param newY      The new y coordinate
-     * @return          The turned BoardElement
-     */
-    public BoardElement turn( int turnSteps, int newX, int newY ) 
-    {
-        List<Direction> newWalls = new ArrayList<Direction>();
-        for (Direction dir : walls) 
-        {
-            newWalls.add(dir.processRotate(turnSteps));
-        }
-
-        try 
-        {
-        	Constructor<? extends AbstractBoardElement> constructor = this.getClass().getDeclaredConstructor( int.class, int.class, List.class );
-        	AbstractBoardElement newInstance = constructor.newInstance( newX, newY, newWalls );
-        	newInstance.performTurn( turnSteps );
-			return newInstance;
-		} 
-        catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) 
-        {	// This shouldn't be possible
-			logger.error("Something went wrong turning this boardElement {}", this, e);
-			return null;
-		}
-    }
-
-    /**
-     * Helper method to execute extra actions for turning this boardElement 
-     * the given number of steps in the clockwise direction
-     * 
-     * @param turnSteps The number of steps to turn
-     */
-    protected void performTurn(int turnSteps) 
-    {
-		// Default implementation is to do nothing extra
-	}
-
 	/**
      * Helper method to check whether a wall exists in that direction.
      * 
@@ -240,9 +271,44 @@ public abstract class AbstractBoardElement implements BoardElement
      */
     public boolean hasWall( Direction side ) 
     {
-        return walls != null && walls.contains( side );
+        return walls.contains( side );
     }
 
+    /**
+     * Sets the bot at this element
+     * 
+     * @param bot The bot to set at this element
+     */
+    public void setBot( Bot bot )
+    {
+    	if( this.bot != null && bot != null && ! this.bot.equals( bot ) )
+    	{
+    		logger.warn( "Replacing bot {} with bot {} at boardElement {}", this.bot, bot, this );
+    		throw new UnsupportedOperationException( "Cannot replace one bot with another at a boardElement" ); 
+    	}
+    	
+    	this.bot = bot;
+    	bot.setLocation( this );
+    }
+    
+    /**
+     * Sets the flag at this element
+     * 
+     * @param flag The flag to set at this element
+     */
+    public void setFlag( Flag flag )
+    {
+    	if( this.flag != null && flag != null && ! this.flag.equals( flag ) )
+    	{
+    		logger.warn( "Replacing flag {} with flag {} at boardElement {}", this.flag, flag, this );
+    		throw new UnsupportedOperationException( "Cannot replace one flag with another at a boardElement" ); 
+    	}
+    	
+    	this.flag = flag;
+    	flag.setLocation( this );
+    	
+    }
+    
     /**
      * Mimics firing the laser(s) on this boardelement, and finds the bot(s) getting hit by the laser(s).
      * Note, returns null if no laser on this boardelement
@@ -290,36 +356,44 @@ public abstract class AbstractBoardElement implements BoardElement
      * Logic that draws this boardElement 
      * 
      * @param g              The graphics object to use
-     * @param boardXOffset   The x offset of the board we are a part of
-     * @param boardYOffset   The y offset of the board we are a part of
-     * @param ySizePanel     The height of the panel we are drawing on
      * @param factor         The magnification factor to use
      */
-    public void paint(Graphics g, int boardXOffset, int boardYOffset, int ySizePanel, int factor) 
+    public void paint(Graphics g, int factor) 
     {
         size = baseSize * factor;
-        int baseX = (boardXOffset + xCoord) * size;
-        int baseY = ySizePanel - ((boardYOffset + yCoord + 1) * size);
-        g.setColor(Color.black);
-        g.drawRect(baseX, baseY, size - 1, size - 1);
-        g.setColor(Color.lightGray);
-        g.fillRect(baseX + 1, baseY + 1, size - 2, size - 2);
-        paintElement(g, baseX, baseY, factor);
-        g.setColor(Color.yellow);
+        int baseX = xCoord * size;
+        int baseY = ( yCoord + 1 ) * size;
+        g.setColor( Color.black );
+        g.drawRect( baseX, baseY, size - 1, size - 1 );
+        g.setColor( Color.lightGray );
+        g.fillRect( baseX + 1, baseY + 1, size - 2, size - 2 );
+        try
+        {
+        	paintElement( g, baseX, baseY, factor );
+        }
+        catch( Throwable t )
+        {
+        	logger.error( "Something went wrong drawing boardelement at coordinates {}, {}", xCoord, yCoord, t);
+        }
+        g.setColor( Color.yellow );
         // corners are to be filled by north or south walls
-        if (walls.contains(Direction.NORTH)) {
-            g.fillRect(baseX, baseY, size, factor);
+        if ( walls.contains( Direction.NORTH ) ) 
+        {
+            g.fillRect( baseX, baseY, size, factor );
         }
-        if (walls.contains(Direction.SOUTH)) {
-            g.fillRect(baseX, baseY + size - factor, size, factor);
+        if ( walls.contains( Direction.SOUTH ) ) 
+        {
+            g.fillRect( baseX, baseY + size - factor, size, factor );
         }
-        if (walls.contains(Direction.WEST)) {
-            g.fillRect(baseX, baseY, factor, size);
+        if ( walls.contains( Direction.WEST ) ) 
+        {
+            g.fillRect( baseX, baseY, factor, size );
         }
-        if (walls.contains(Direction.EAST)) {
-            g.fillRect(baseX + size - factor, baseY, factor, size);
+        if ( walls.contains( Direction.EAST ) ) 
+        {
+            g.fillRect( baseX + size - factor, baseY, factor, size );
         }
-        g.setColor(Color.red);
+        g.setColor( Color.red );
         
         drawLaserMount( g, baseX, baseY, factor );
 
@@ -445,7 +519,7 @@ public abstract class AbstractBoardElement implements BoardElement
 		        int laserEndY = 0;
 		        
 		        // compensation for having to draw multiple laser lines
-		        double compensation = ( i + 0.0 ) / ( laser.getStrength() );
+		        double compensation = ( i + 0.0 ) / ( laser.getStrength() + 1 );
 		        
 		        // calculate the numbers based on the direction
 		        if ( laser.getShotDir().equals( Direction.NORTH ) || laser.getShotDir().equals( Direction.SOUTH ) ) 

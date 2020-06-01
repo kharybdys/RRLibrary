@@ -22,20 +22,17 @@ public abstract class AbstractPusher extends AbstractBoardElement {
     protected Collection<Integer> pusherPhases;
 
     /**
-     * Basic constructor for any pusher
-     * Adds pusherDirection onto the basic boardelement
+     * Setup method, adds the pusherDirection
      * 
-     * @param xCoord          The xCoordinate of this boardElement
-     * @param yCoord          The yCoordinate of this boardElement
-     * @param walls           The collection of directions that have walls on this boardElement
-     * @param pusherDirection The direction this pusher pushes towards
+     * @param pusherDirection
+     * @return
      */
-    public AbstractPusher( int xCoord, int yCoord, Collection<Direction> walls, Direction pusherDirection ) 
+    public AbstractPusher withPusherDirection( Direction pusherDirection )
     {
-        super( xCoord, yCoord, walls );
-        this.pusherDirection = pusherDirection;
+    	this.pusherDirection = pusherDirection;
+    	
+    	return this;
     }
-
     /**
      * Get the basic movement that this board element enacts on the bot in the given phase.
      * 
@@ -54,18 +51,6 @@ public abstract class AbstractPusher extends AbstractBoardElement {
         {
             return Collections.emptyList();
         }
-    }
-
-    /**
-     * Helper method to execute extra actions for turning this boardElement 
-     * the given number of steps in the clockwise direction
-     * 
-     * @param turnSteps The number of steps to turn
-     */
-    @Override
-    protected void performTurn( int turnSteps ) 
-    {
-        pusherDirection = pusherDirection == null ? null : pusherDirection.processRotate( turnSteps );
     }
 
     /**

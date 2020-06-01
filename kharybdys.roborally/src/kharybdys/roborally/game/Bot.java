@@ -13,15 +13,18 @@ import kharybdys.roborally.game.definition.Movement;
  */
 public class Bot extends AbstractMovingElement {
 
-    public static final Integer INITIAL_HEALTH = 9 ;
+	public static final Integer INITIAL_HEALTH = 9 ;
 
     private Integer id;
     private Integer damage = 0;
-    private Integer lives = 3;
     private Game game;
-    private Flag archiveObject;
     private String displayName;
     private Direction facingDirection;
+
+    public Bot( Integer orderNumber ) 
+    {
+		super( orderNumber );
+	}
 
     public Integer getId() {
         return id;
@@ -54,16 +57,6 @@ public class Bot extends AbstractMovingElement {
         this.displayName = displayName;
     }
 
-    @Override
-    public Integer getLives() {
-        return lives;
-    }
-
-    @Override
-    public void setLives(Integer lives) {
-        this.lives = lives;
-    }
-
     public Direction getFacingDirection() {
         return facingDirection;
     }
@@ -80,36 +73,6 @@ public class Bot extends AbstractMovingElement {
     @Override
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    @Override
-    public AbstractMovingElement getArchiveObject() {
-        return archiveObject;
-    }
-
-    @Override
-    public void setArchiveObject(AbstractMovingElement ame) {
-        if (ame instanceof Flag)
-        {
-        archiveObject = (Flag) ame;
-        }
-        else
-        {
-            throw new IllegalArgumentException("Cannot set a bot (" + ame + ") as an archive object.");
-        }
-    }
-
-    public static Bot getBot(int xCoord, int yCoord, int number, String name)
-    {
-        Bot bot = new Bot();
-        bot.setArchiveXCoord(xCoord);
-        bot.setArchiveYCoord(yCoord);
-        bot.setxCoord(xCoord);
-        bot.setyCoord(yCoord);
-        bot.setOrderNumber(number);
-        bot.setDisplayName(name);
-        bot.setFacingDirection(Direction.NORTH);
-        return bot;
     }
 
     @Override
@@ -172,7 +135,11 @@ public class Bot extends AbstractMovingElement {
     public void processDeath()
     {
         super.processDeath();
-        setLives(getLives() - 1);
+
+		currentLocation.setBot( null );
+		currentLocation = null;
+
+		this.lives--;
         setDamage(2);
         setFacingDirection(Direction.NORTH);
     }

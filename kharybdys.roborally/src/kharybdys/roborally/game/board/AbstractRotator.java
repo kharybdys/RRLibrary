@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.util.Collections;
 import java.util.Collection;
 
-import kharybdys.roborally.game.definition.Direction;
 import kharybdys.roborally.game.definition.Movement;
 import kharybdys.roborally.game.definition.Movement.RoboRallyMovementType;
 
@@ -18,19 +17,6 @@ public abstract class AbstractRotator extends AbstractBoardElement
     int turnSteps = 0;
     Color color;
     
-    /**
-     * Basic constructor for any rotator
-     * Does nothing extra
-     * 
-     * @param xCoord          The xCoordinate of this boardElement
-     * @param yCoord          The yCoordinate of this boardElement
-     * @param walls           The collection of directions that have walls on this boardElement
-     */
-    public AbstractRotator( int xCoord, int yCoord, Collection<Direction> walls ) 
-    {
-        super( xCoord, yCoord, walls );
-    }
-
     /**
      * Get the basic movement that this board element enacts on the bot in the given phase.
      * 

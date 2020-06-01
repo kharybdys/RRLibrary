@@ -140,7 +140,7 @@ public class RulesEngine {
                     processAbstractMovingElementMovement(g, bot, movement);
                 }
                 // check for repair or option site to repair
-                BoardElement currentElement = bot.getBoardElement();
+                BoardElement currentElement = bot.getLocation();
                 if (currentElement.getBoardElementType().equals(BasicElementType.REPAIR)
                         || currentElement.getBoardElementType().equals(BasicElementType.OPTION))
                 {
@@ -189,17 +189,17 @@ public class RulesEngine {
      * @return
      */
     public static Movement processAbstractMovingElementMovement(Game g, AbstractMovingElement ame, Movement movement) {
-        BoardElement currentElement = ame.getBoardElement();
+        BoardElement currentElement = ame.getLocation();
         // wall check
         movement = currentElement.adjustMovementForWalls(movement);
         if (ame instanceof Bot)
         {
             // push check
-            movement = processPossiblePushedBot(g, movement, ((Bot) ame).getCoords(), ((Bot) ame).getOrderNumber());
+            movement = processPossiblePushedBot(g, movement, null, ((Bot) ame).getOrderNumber()); // TODO
         }
         ame.processMovement(movement);
         // we can have moved so update the element we are on.
-        currentElement = ame.getBoardElement();
+        currentElement = ame.getLocation();
         // pit check
         if (currentElement.getBoardElementType().equals(BasicElementType.HOLE))
         {
@@ -211,7 +211,7 @@ public class RulesEngine {
     }
 
     private static Movement processPossiblePushedBot(Game g, Movement movement, Coordinates coords, Integer orderNumberToSkip) {
-        Bot pushedBot = g.getBotOn(coords);
+        Bot pushedBot = null; // TODO
         if (pushedBot != null && ! pushedBot.getOrderNumber().equals( orderNumberToSkip ))
         {
             movement = processAbstractMovingElementMovement(g, pushedBot, movement);
@@ -241,7 +241,7 @@ public class RulesEngine {
         {
             if (!movingElement.getDiedThisTurn() && movingElement.getLives() >= 0)
             {
-            	Collection<Movement> tempMovements = movingElement.getBoardElement().getBoardMovements( phase );
+            	Collection<Movement> tempMovements = movingElement.getLocation().getBoardMovements( phase );
             	tempMovements.forEach( (movement) -> movement.setMovingElement( movingElement ) );
             	boardMovements.addAll( tempMovements );
             }

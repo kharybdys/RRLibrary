@@ -17,16 +17,9 @@ public class DualSpeedConveyor extends AbstractConveyor
     /**
      * Basic constructor for a dual-speed conveyor belt
      * Just defines the color
-     * 
-     * @param xCoord             The xCoordinate of this boardElement
-     * @param yCoord             The yCoordinate of this boardElement
-     * @param walls              The collection of directions that have walls on this boardElement
-     * @param startingDirections The collection of directions from which this conveyor belt comes TODO: decide whether to derive instead of specify
-     * @param endDirection       The direction this conveyor belt exits to
      */
-    public DualSpeedConveyor( int xCoord, int yCoord, Collection<Direction> walls, Collection<Direction> startingDirections, Direction endDirection ) 
+    public DualSpeedConveyor() 
     {
-        super( xCoord, yCoord, walls, startingDirections, endDirection );
         color = Color.blue;
     }
 

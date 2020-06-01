@@ -1,59 +1,139 @@
 package kharybdys.roborally.game.definition;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
- *
- * @author MHK
+ *  Defines all the possible movement cards with conversion method to Movement object(s)
  */
-public class MovementCardDefinition {
-	public enum MovementCardType {
-		MOVE3, MOVE2, MOVE1, BACKUP, TURNRIGHT, TURNLEFT, UTURN
-	}
+public enum MovementCardDefinition 
+{
+    MC_10(  10,  MovementCardType.UTURN ),
+    MC_20(  20,  MovementCardType.UTURN ),
+    MC_30(  30,  MovementCardType.UTURN ),
+    MC_40(  40,  MovementCardType.UTURN ),
+    MC_50(  50,  MovementCardType.UTURN ),
+    MC_60(  60,  MovementCardType.UTURN ),
+    MC_70(  70,  MovementCardType.TURNLEFT ),
+    MC_80(  80,  MovementCardType.TURNRIGHT ),
+    MC_90(  90,  MovementCardType.TURNLEFT ),
+    MC_100( 100, MovementCardType.TURNRIGHT ),
+    MC_110( 110, MovementCardType.TURNLEFT ),
+    MC_120( 120, MovementCardType.TURNRIGHT ),
+    MC_130( 130, MovementCardType.TURNLEFT ),
+    MC_140( 140, MovementCardType.TURNRIGHT ),
+    MC_150( 150, MovementCardType.TURNLEFT ),
+    MC_160( 160, MovementCardType.TURNRIGHT ),
+    MC_170( 170, MovementCardType.TURNLEFT ),
+    MC_180( 180, MovementCardType.TURNRIGHT ),
+    MC_190( 190, MovementCardType.TURNLEFT ),
+    MC_200( 200, MovementCardType.TURNRIGHT ),
+    MC_210( 210, MovementCardType.TURNLEFT ),
+    MC_220( 220, MovementCardType.TURNRIGHT ),
+    MC_230( 230, MovementCardType.TURNLEFT ),
+    MC_240( 240, MovementCardType.TURNRIGHT ),
+    MC_250( 250, MovementCardType.TURNLEFT ),
+    MC_260( 260, MovementCardType.TURNRIGHT ),
+    MC_270( 270, MovementCardType.TURNLEFT ),
+    MC_280( 280, MovementCardType.TURNRIGHT ),
+    MC_290( 290, MovementCardType.TURNLEFT ),
+    MC_300( 300, MovementCardType.TURNRIGHT ),
+    MC_310( 310, MovementCardType.TURNLEFT ),
+    MC_320( 320, MovementCardType.TURNRIGHT ),
+    MC_330( 330, MovementCardType.TURNLEFT ),
+    MC_340( 340, MovementCardType.TURNRIGHT ),
+    MC_350( 350, MovementCardType.TURNLEFT ),
+    MC_360( 360, MovementCardType.TURNRIGHT ),
+    MC_370( 370, MovementCardType.TURNLEFT ),
+    MC_380( 380, MovementCardType.TURNRIGHT ),
+    MC_390( 390, MovementCardType.TURNLEFT ),
+    MC_400( 400, MovementCardType.TURNRIGHT ),
+    MC_410( 410, MovementCardType.TURNLEFT ),
+    MC_420( 420, MovementCardType.TURNRIGHT ),
+    MC_430( 430, MovementCardType.BACKUP ),
+    MC_440( 440, MovementCardType.BACKUP ),
+    MC_450( 450, MovementCardType.BACKUP ),
+    MC_460( 460, MovementCardType.BACKUP ),
+    MC_470( 470, MovementCardType.BACKUP ),
+    MC_480( 480, MovementCardType.BACKUP ),
+    MC_490( 490, MovementCardType.MOVE1 ),
+    MC_500( 500, MovementCardType.MOVE1 ),
+    MC_510( 510, MovementCardType.MOVE1 ),
+    MC_520( 520, MovementCardType.MOVE1 ),
+    MC_530( 530, MovementCardType.MOVE1 ),
+    MC_540( 540, MovementCardType.MOVE1 ),
+    MC_550( 550, MovementCardType.MOVE1 ),
+    MC_560( 560, MovementCardType.MOVE1 ),
+    MC_570( 570, MovementCardType.MOVE1 ),
+    MC_580( 580, MovementCardType.MOVE1 ),
+    MC_590( 590, MovementCardType.MOVE1 ),
+    MC_600( 600, MovementCardType.MOVE1 ),
+    MC_610( 610, MovementCardType.MOVE1 ),
+    MC_620( 620, MovementCardType.MOVE1 ),
+    MC_630( 630, MovementCardType.MOVE1 ),
+    MC_640( 640, MovementCardType.MOVE1 ),
+    MC_650( 650, MovementCardType.MOVE1 ),
+    MC_660( 660, MovementCardType.MOVE1 ),
+    MC_670( 670, MovementCardType.MOVE2 ),
+    MC_680( 680, MovementCardType.MOVE2 ),
+    MC_690( 690, MovementCardType.MOVE2 ),
+    MC_700( 700, MovementCardType.MOVE2 ),
+    MC_710( 710, MovementCardType.MOVE2 ),
+    MC_720( 720, MovementCardType.MOVE2 ),
+    MC_730( 730, MovementCardType.MOVE2 ),
+    MC_740( 740, MovementCardType.MOVE2 ),
+    MC_750( 750, MovementCardType.MOVE2 ),
+    MC_760( 760, MovementCardType.MOVE2 ),
+    MC_770( 770, MovementCardType.MOVE2 ),
+    MC_780( 780, MovementCardType.MOVE2 ),
+    MC_790( 790, MovementCardType.MOVE3 ),
+    MC_800( 800, MovementCardType.MOVE3 ),
+    MC_810( 810, MovementCardType.MOVE3 ),
+    MC_820( 820, MovementCardType.MOVE3 ),
+    MC_830( 830, MovementCardType.MOVE3 ),
+    MC_840( 840, MovementCardType.MOVE3 );
 
-	private Long id;
+	private int priority;
 	private MovementCardType type;
-	private Integer priority;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Integer getPriority() {
-		return priority;
-	}
-
-	public void setPriority(Integer priority) {
+	
+	private MovementCardDefinition( int priority, MovementCardType type )
+	{
 		this.priority = priority;
-	}
-
-	public MovementCardType getType() {
-		return type;
-	}
-
-	public void setType(MovementCardType type) {
 		this.type = type;
 	}
-
-	@Override
-	public int hashCode() {
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
-		return hash;
+	
+	private enum MovementCardType 
+	{
+		MOVE3, MOVE2, MOVE1, BACKUP, TURNRIGHT, TURNLEFT, UTURN
 	}
-
-	@Override
-	public boolean equals(Object object) {
-		// Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof MovementCardDefinition)) {
-			return false;
+	
+	public Collection<Movement> getMovements( Direction facingDirection )
+	{
+		Collection<Movement> movements = new ArrayList<Movement>();
+		switch( type )
+		{
+			case MOVE3:
+				movements.add( new Movement( facingDirection, 0, 1, priority ) );
+				// intentional no break
+			case MOVE2:
+				movements.add( new Movement( facingDirection, 0, 1, priority ) );
+				// 	intentional no break
+			case MOVE1:
+				movements.add( new Movement( facingDirection, 0, 1, priority ) );
+				break;
+			case BACKUP:
+				movements.add( new Movement( facingDirection.processRotate( 2 ), 0, 1, priority ) );
+				break;
+			case TURNLEFT:
+				movements.add( new Movement( null, -1, 0, priority ) );
+				break;
+			case TURNRIGHT:
+				movements.add( new Movement( null, 1, 0, priority ) );
+				break;
+			case UTURN:
+				movements.add( new Movement( null, 2, 0, priority ) );
+				break;
 		}
-		MovementCardDefinition other = (MovementCardDefinition) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-			return false;
-		}
-		return true;
+		return movements;
 	}
 }

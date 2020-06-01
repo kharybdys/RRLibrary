@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import kharybdys.roborally.game.Bot;
+import kharybdys.roborally.game.Flag;
 import kharybdys.roborally.game.definition.Direction;
 import kharybdys.roborally.game.definition.Movement;
 
@@ -18,20 +19,23 @@ public interface BoardElement
 	/**
 	 * Unique element representing anything outside of the board.
 	 */
-    public BoardElement outsideElement = new BasicElement(-1, -1, null, 0, BasicElementType.HOLE);
+    public BoardElement outsideElement = new BasicElement().withBasicElementType( BasicElementType.HOLE );
 
-    /**
-     * Turn a copy of this board element turned the number of steps in the clockwise direction
-     * Assumes turning is done before laser logic is applied
-     * 
-     * @param turnSteps The number of steps to turn
-     * @param newX      The new x coordinate
-     * @param newY      The new y coordinate
-     * @return          The turned BoardElement
-     */
-    public BoardElement turn(int turnSteps, int newX, int newY);
+	/**
+	 * Returns the X Coordinate of this boardElement
+	 * 
+	 * @return the X Coordinate
+	 */
+	public int getXCoordinate();
 
-    /**
+	/**
+	 * Returns the Y Coordinate of this boardElement
+	 * 
+	 * @return the Y Coordinate
+	 */
+	public int getYCoordinate();
+
+	/**
      * Adds a laser to this boardElement and its neighbours until this laser hits a wall
      * Used recursively
      * 
@@ -50,6 +54,14 @@ public interface BoardElement
     public void addNeighbour( Direction direction, BoardElement neighbour );
 
     /**
+     * Setup method, removes the neighbour in the given direction.
+     * Also removes us from the neighbour's neighbour list in the opposite direction
+     * 
+     * @param direction The direction to remove
+     */
+	public void removeNeighbour( Direction direction );
+
+	/**
      * Gets the neighbour in the given direction. Always returns a boardElement
      * 
      * @param direction The direction for which to return the neighbour
@@ -62,13 +74,24 @@ public interface BoardElement
      * Logic that draws this boardElement 
      * 
      * @param g              The graphics object to use
-     * @param boardXOffset   The x offset of the board we are a part of
-     * @param boardYOffset   The y offset of the board we are a part of
-     * @param ySizePanel     The height of the panel we are drawing on
      * @param factor         The magnification factor to use
      */
-    public void paint(Graphics g, int boardXOffset, int boardYOffset, int ySizePanel, int factor);
+    public void paint( Graphics g, int factor );
 
+    /**
+     * Sets the bot at this element
+     * 
+     * @param bot The bot to set at this element
+     */
+    public void setBot( Bot bot );
+    
+    /**
+     * Sets the flag at this element
+     * 
+     * @param flag The flag to set at this element
+     */
+    public void setFlag( Flag flag );
+    
     /**
      * Mimics firing the laser(s) on this boardelement, and finds the bot(s) getting hit by the laser(s).
      * Note, returns null if no laser on this boardelement

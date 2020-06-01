@@ -1,5 +1,8 @@
 package kharybdys.roborally.game.definition;
 
+import java.util.Collection;
+import java.util.EnumSet;
+
 /**
  * Enum with added business logic encapsulating the cardinal directions
  */
@@ -13,13 +16,19 @@ public enum Direction {
      * Returns the new direction when rotated the amount of turns
      * Inverse of {@link #getTurns(Direction)}
      * 
-     * @param steps The number of steps to turn
+     * @param turnSteps The number of steps to turn
      * 
      * @return The new direction
      */
-    public Direction processRotate( int steps ) 
+    public Direction processRotate( int turnSteps ) 
     {
-        int newDirectionOrd = this.ordinal() + steps;
+    	// Efficiency, return ourselves if turnSteps = 0
+    	if( turnSteps == 0 )
+    	{
+    		return this;
+    	}
+
+    	int newDirectionOrd = this.ordinal() + turnSteps;
         while (newDirectionOrd < 0 || newDirectionOrd > 3) 
         {
             if (newDirectionOrd > 3) 
@@ -60,5 +69,41 @@ public enum Direction {
             }
         }
         return turn;
+    }
+    
+    public static Collection<Direction> of( Direction d1 )
+    {
+    	return EnumSet.of( d1 );
+    }
+
+    public static Collection<Direction> of( Direction d1, Direction d2 )
+    {
+    	return EnumSet.of( d1, d2 );
+    }
+
+    public static Collection<Direction> of( Direction d1, Direction d2, Direction d3 )
+    {
+    	return EnumSet.of( d1, d2, d3 );
+    }
+
+    public static Collection<Direction> of( Direction d1, Direction d2, Direction d3, Direction d4 )
+    {
+    	return EnumSet.of( d1, d2, d3, d4 );
+    }
+    
+    public static Collection<Direction> turnCollection( Collection<Direction> directions, int turnSteps )
+    {
+    	// Efficiency, return the given collection if turnSteps = 0
+    	if( turnSteps == 0 )
+    	{
+    		return directions;
+    	}
+    	
+    	EnumSet<Direction> result = EnumSet.noneOf( Direction.class );
+    	for( Direction dir : directions )
+    	{
+    		result.add( dir.processRotate( turnSteps ) );
+    	}
+    	return result;
     }
 }

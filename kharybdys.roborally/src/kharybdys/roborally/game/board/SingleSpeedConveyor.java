@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Collection;
 
-import kharybdys.roborally.game.definition.Direction;
 import kharybdys.roborally.game.definition.Movement;
 
 /**
@@ -16,17 +15,10 @@ public class SingleSpeedConveyor extends AbstractConveyor
     /**
      * Basic constructor for a single-speed conveyor belt
      * Just defines color
-     * 
-     * @param xCoord             The xCoordinate of this boardElement
-     * @param yCoord             The yCoordinate of this boardElement
-     * @param walls              The collection of directions that have walls on this boardElement
-     * @param startingDirections The collection of directions from which this conveyor belt comes TODO: decide whether to derive instead of specify
-     * @param endDirection       The direction this conveyor belt exits to
      */
     
-    public SingleSpeedConveyor( int xCoord, int yCoord, Collection<Direction> walls, Collection<Direction> startingDirections, Direction endDirection )
+    public SingleSpeedConveyor()
     {
-       super( xCoord, yCoord, walls, startingDirections, endDirection );
        color = new Color(127, 127, 0);
     }
 

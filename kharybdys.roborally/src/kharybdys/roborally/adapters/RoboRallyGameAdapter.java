@@ -15,7 +15,7 @@ import com.dexels.navajo.script.api.Mappable;
 import com.dexels.navajo.script.api.MappableException;
 import com.dexels.navajo.script.api.UserException;
 
-import kharybdys.roborally.game.Game;
+import kharybdys.roborally.game.GameFactory;
 import kharybdys.roborally.game.board.ImplementedScenario;
 
 //import kharybdys.roborally.game.Game;
@@ -65,7 +65,7 @@ public class RoboRallyGameAdapter implements Mappable {
 	public Binary getBoardImage() {
 //    	return new Binary( game.getBoardImage() );
 		try {
-			BufferedImage bi = Game.getPreviewImage(ImplementedScenario.Test, true, null, null, 4);
+			BufferedImage bi = GameFactory.getPreviewImage(ImplementedScenario.Test, 5, 4);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(bi, "png", baos);
 			return new Binary(baos.toByteArray());

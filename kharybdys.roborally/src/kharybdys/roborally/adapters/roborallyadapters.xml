@@ -7,11 +7,22 @@
 		<object>kharybdys.roborally.adapters.RoboRallyGameAdapter</object>
 		<values>
 			<value name="gameId" type="integer" required="true" direction="in" />
+			<value name="transactionContext" type="integer" required="true" direction="in" />
+			<value name="factor" type="integer" required="false" direction="in" />
 			<value name="boardImage" type="binary" required="false" direction="out" />
 		</values>
 		<methods>
-			<method name="initializeGame">
-                <param name="initializeGame" field="doInitializeGame" type="boolean" required="automatic" value="true" />
+			<method name="performFirstSetup">
+                <param name="performFirstSetup" field="performFirstSetup" type="boolean" required="automatic" value="true" />
+            </method>
+			<method name="calculateNextRound">
+                <param name="calculateNextRound" field="calculateNextRound" type="boolean" required="automatic" value="true" />
+            </method>
+			<method name="performOptionRecompile">
+				<param name="botId" field="performOptionRecompile" type="integer" required="true" />
+            </method>
+			<method name="powerDown">
+                <param name="botId" field="powerDown" type="integer" required="true"/>
             </method>
 		</methods>
 	</map>

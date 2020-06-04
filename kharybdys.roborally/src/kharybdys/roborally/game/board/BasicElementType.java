@@ -30,4 +30,15 @@ public enum BasicElementType
 	{
 		return number;
 	}
+	
+	/**
+	 * Returns whether this type represents a starting position.
+	 * 
+	 * @return Whether this type represents a starting position
+	 */
+	public boolean isStartingPosition() 
+	{
+		// If more types will use numbers, rewrite to actually do a check on type.
+		return number > 0;
+	}
 }

@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
-import kharybdys.roborally.game.definition.Movement.RoboRallyMovementType;
+import kharybdys.roborally.game.movement.Movement;
+import kharybdys.roborally.game.movement.Movement.MovementType;
 
 /**
  * Abstract implementation of a conveyor belt. Only thing that's missing is its speed (single or dual)
@@ -70,7 +70,7 @@ public abstract class AbstractConveyor extends AbstractBoardElement
     	int priorityFactor = firstAction ? 3 : 1;
     	Collection<Movement> boardMovements = new ArrayList<Movement>();
     	// 1) Basic movement of the conveyor
-    	boardMovements.add( new Movement( endDirection, 0, RoboRallyMovementType.SINGLE_SPEED_CONVEYOR, 1, 200 * priorityFactor ) );
+    	boardMovements.add( new Movement( endDirection, 0, MovementType.SINGLE_SPEED_CONVEYOR, 1, 200 * priorityFactor ) );
     	// 2) Extra turn action ( optional ), only when nextElement is the same type as we are
     	BoardElement nextElement = getNeighbour( endDirection );
     	if( this.getClass().equals( nextElement.getClass() ) && nextElement instanceof AbstractConveyor )
@@ -79,7 +79,7 @@ public abstract class AbstractConveyor extends AbstractBoardElement
     		Direction nextEndDirection = ((AbstractConveyor) nextElement).endDirection; 
     	    if( ! nextEndDirection.equals( endDirection ) )
     	    {	// TODO: Verify the correct direction of turns is gotten. Might also be wrong on the enum implementation
-    	    	boardMovements.add( new Movement( null, endDirection.getTurns( nextEndDirection ), RoboRallyMovementType.SINGLE_SPEED_CONVEYOR, 0, 100 * priorityFactor ) );
+    	    	boardMovements.add( new Movement( null, endDirection.getTurns( nextEndDirection ), MovementType.SINGLE_SPEED_CONVEYOR, 0, 100 * priorityFactor ) );
     	    }
     	}
     	return boardMovements;

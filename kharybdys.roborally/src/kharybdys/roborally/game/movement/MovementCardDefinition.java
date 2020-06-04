@@ -1,7 +1,9 @@
-package kharybdys.roborally.game.definition;
+package kharybdys.roborally.game.movement;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
+import kharybdys.roborally.game.definition.Direction;
 
 /**
  *  Defines all the possible movement cards with conversion method to Movement object(s)
@@ -102,38 +104,49 @@ public enum MovementCardDefinition
 		this.type = type;
 	}
 	
-	private enum MovementCardType 
+	protected enum MovementCardType 
 	{
-		MOVE3, MOVE2, MOVE1, BACKUP, TURNRIGHT, TURNLEFT, UTURN
+		MOVE3(     3, 0 ), 
+		MOVE2(     2, 0 ), 
+		MOVE1(     1, 0 ), 
+		BACKUP(   -1, 0 ), 
+		TURNRIGHT( 0, 1 ), 
+		TURNLEFT(  0, -1 ), 
+		UTURN(     0, 2 );
+		
+		private int movingSteps = 0;
+		private int turnSteps = 0;
+		
+		private MovementCardType( int movingSteps, int turnSteps )
+		{
+			this.movingSteps = movingSteps;
+			this.turnSteps = turnSteps;
+		}
+
+		protected int getMovingSteps() 
+		{
+			return movingSteps;
+		}
+
+		protected int getTurnSteps() 
+		{
+			return turnSteps;
+		}
 	}
 	
 	public Collection<Movement> getMovements( Direction facingDirection )
 	{
 		Collection<Movement> movements = new ArrayList<Movement>();
-		switch( type )
-		{
-			case MOVE3:
-				movements.add( new Movement( facingDirection, 0, 1, priority ) );
-				// intentional no break
-			case MOVE2:
-				movements.add( new Movement( facingDirection, 0, 1, priority ) );
-				// 	intentional no break
-			case MOVE1:
-				movements.add( new Movement( facingDirection, 0, 1, priority ) );
-				break;
-			case BACKUP:
-				movements.add( new Movement( facingDirection.processRotate( 2 ), 0, 1, priority ) );
-				break;
-			case TURNLEFT:
-				movements.add( new Movement( null, -1, 0, priority ) );
-				break;
-			case TURNRIGHT:
-				movements.add( new Movement( null, 1, 0, priority ) );
-				break;
-			case UTURN:
-				movements.add( new Movement( null, 2, 0, priority ) );
-				break;
-		}
 		return movements;
+	}
+
+	protected int getPriority() 
+	{
+		return priority;
+	}
+
+	protected MovementCardType getType() 
+	{
+		return type;
 	}
 }

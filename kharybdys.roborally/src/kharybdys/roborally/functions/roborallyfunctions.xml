@@ -1,10 +1,16 @@
 <functiondef>
 	<!-- Please keep this file in alfabetical order -->
 
-	<function name="Wait" class="kharybdys.roborally.functions.Wait">
-		<description>Wait for specified number of milliseconds</description>
-		<input>empty</input>
-		<result>empty</result>
+	<function name="CreatePreviewImage" class="kharybdys.roborally.functions.CreatePreviewImage">
+		<description>Creates a binary property representing the preview image for a given scenario (by name)</description>
+		<input>string</input>
+		<result>binary</result>
+	</function>
+	
+	<function name="GetNrOfFlags" class="kharybdys.roborally.functions.GetNrOfFlags">
+		<description>Returns the number of flags in the given scenario</description>
+		<input>string</input>
+		<result>integer</result>
 	</function>
 	
 </functiondef>

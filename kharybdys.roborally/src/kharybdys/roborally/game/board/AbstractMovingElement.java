@@ -5,10 +5,11 @@ import java.awt.Graphics;
 import kharybdys.roborally.game.Bot;
 import kharybdys.roborally.game.Flag;
 import kharybdys.roborally.game.Game;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
- *  Models an element that can move over the board. Bots and Flags come to mind 
+ *  Models an element that can move over the board. Bots and Flags come to mind
+ *  TODO: Maybe model archiveMarkers also as AbstractMovingElements? That way an archive marker at a moving flag can be modelled. 
  */
 public abstract class AbstractMovingElement {
 
@@ -19,9 +20,12 @@ public abstract class AbstractMovingElement {
 	protected int lives;
 
 	protected Boolean diedThisTurn = false;
+	protected Integer id;
+	private Game game;
 
-	public AbstractMovingElement( Integer orderNumber ) 
+	public AbstractMovingElement( Integer id, Integer orderNumber ) 
 	{
+		this.id = id;
 		this.orderNumber = orderNumber;
 	}
 
@@ -45,6 +49,11 @@ public abstract class AbstractMovingElement {
 	public void setLocation( BoardElement location )
 	{
 		this.currentLocation = location;
+	}
+
+	public BoardElement getArchiveMarker()
+	{
+		return archiveMarker;
 	}
 	
 	public void setArchiveMarker( BoardElement archiveMarker )
@@ -73,10 +82,6 @@ public abstract class AbstractMovingElement {
 		}
 	}
 
-	public abstract Game getGame();
-
-	public abstract void setGame(Game game);
-
 	public Boolean getDiedThisTurn() 
 	{
 		return diedThisTurn;
@@ -96,4 +101,48 @@ public abstract class AbstractMovingElement {
     {
     	return orderNumber;
     }
+
+	public Integer getId() 
+	{
+	    return id;
+	}
+
+	public Game getGame() 
+	{
+	    return game;
+	}
+
+	public void setGame( Game game ) 
+	{
+	    this.game = game;
+	}
+
+	@Override
+	public int hashCode() 
+	{
+	    int hash = 0;
+	    hash += ( id != null ? id.hashCode() : 0 );
+	    return hash;
+	}
+
+	@Override
+	public boolean equals( Object object ) 
+	{
+	    // Warning - this method won't work in the case the id fields are not set
+	    if ( !getClass().isInstance( object ) ) 
+	    {
+	        return false;
+	    }
+	    AbstractMovingElement other = (AbstractMovingElement) object;
+	    if ( ( this.id == null && other.id != null ) || ( this.id != null && !this.id.equals( other.id ) ) ) 
+	    {
+	        return false;
+	    }
+	    return true;
+	}
+
+	protected void updateLocation(Movement movement) {
+		// TODO Auto-generated method stub
+		
+	}
 }

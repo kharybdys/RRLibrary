@@ -1,10 +1,11 @@
-package kharybdys.roborally.game.definition;
+package kharybdys.roborally.game.movement;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kharybdys.roborally.game.board.AbstractMovingElement;
+import kharybdys.roborally.game.definition.Direction;
 import kharybdys.util.Coordinates;
 
 /**
@@ -18,7 +19,7 @@ public class Movement implements Comparable<Movement>
     /*
      * movementDirection needs to be not null when numberSquares isn't 0 and we want to process it.
      */
-    private RoboRallyMovementType type;
+    private MovementType type;
     private Direction movementDirection;
     /*
      * positive is clockwise, negative is counterclockwise.
@@ -35,7 +36,7 @@ public class Movement implements Comparable<Movement>
     
     private AbstractMovingElement movingElement = null;
 
-    public enum RoboRallyMovementType 
+    public enum MovementType 
     {
 
         ROBOT_MOVEMENT,
@@ -46,7 +47,7 @@ public class Movement implements Comparable<Movement>
         NONE
     }
 
-    public Movement( Direction movementDirection, int turnSteps, RoboRallyMovementType type, int numberSquares, int priority ) 
+    public Movement( Direction movementDirection, int turnSteps, MovementType type, int numberSquares, int priority ) 
     {
         this.type = type;
         this.movementDirection = movementDirection;
@@ -57,7 +58,7 @@ public class Movement implements Comparable<Movement>
 
     public Movement( Direction movementDirection, int turnSteps, int numberSquares, int priority ) 
     {
-        this( movementDirection, turnSteps, RoboRallyMovementType.ROBOT_MOVEMENT, numberSquares, priority );
+        this( movementDirection, turnSteps, MovementType.ROBOT_MOVEMENT, numberSquares, priority );
     }
 
     public Direction getNewFacingDirection(Direction oldFacingDirection)
@@ -83,7 +84,7 @@ public class Movement implements Comparable<Movement>
         return movementDirection;
     }
     
-    public RoboRallyMovementType getType()
+    public MovementType getType()
     {
         return type;
     }

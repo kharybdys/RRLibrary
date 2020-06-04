@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
-import kharybdys.roborally.game.definition.Movement.RoboRallyMovementType;
+import kharybdys.roborally.game.movement.Movement;
+import kharybdys.roborally.game.movement.Movement.MovementType;
 
 /**
  * Class representing an AbstractPusher. Only part missing is the phases this pusher applies to
@@ -45,7 +45,7 @@ public abstract class AbstractPusher extends AbstractBoardElement {
     {
         if ( pusherPhases.contains( phase ) ) 
         {
-            return Collections.singletonList( new Movement( pusherDirection, 0, RoboRallyMovementType.PUSHER, 1, 0 ) );
+            return Collections.singletonList( new Movement( pusherDirection, 0, MovementType.PUSHER, 1, 0 ) );
         } 
         else 
         {

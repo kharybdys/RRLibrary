@@ -5,98 +5,63 @@ import java.awt.*;
 import kharybdys.roborally.game.board.AbstractMovingElement;
 import kharybdys.roborally.game.board.BoardElement;
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
+import kharybdys.roborally.game.options.OptionCardDefinition;
 
 /**
- *
- * @author MHK
+ *	Models a bot
  */
 public class Bot extends AbstractMovingElement {
 
-	public static final Integer INITIAL_HEALTH = 9 ;
+	public static final Integer INITIAL_HEALTH = 10 ;
 
-    private Integer id;
     private Integer damage = 0;
-    private Game game;
-    private String displayName;
+    // number of the highest flag touched
+	private Integer latestFlag = 0;
     private Direction facingDirection;
 
-    public Bot( Integer orderNumber ) 
+
+    public Bot( Integer id, Integer damage, Integer lives, Integer latestFlag, Integer orderNumber, Direction facingDirection ) 
     {
-		super( orderNumber );
+		super( id, orderNumber );
+		this.lives = lives;
+		this.latestFlag = latestFlag;
+		this.facingDirection = facingDirection;
 	}
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getDamage() {
         return damage;
     }
 
-    public void setDamage(Integer damage) {
-        if (damage >= INITIAL_HEALTH)
+    public void takeDamage( Integer damage ) 
+    {
+        this.damage += damage;
+        if ( this.damage >= INITIAL_HEALTH )
         { // you died
             processDeath();
         }
-        else
-        {
-            this.damage = damage;
-        }
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public Direction getFacingDirection() {
+    public Direction getFacingDirection() 
+    {
         return facingDirection;
     }
 
-    public void setFacingDirection(Direction facingDirection) {
-        this.facingDirection = facingDirection;
-    }
 
-    @Override
-    public Game getGame() {
-        return game;
-    }
+	public int getLatestFlag() 
+	{
+		return latestFlag;
+	}
 
+	public boolean hasOptionCard( OptionCardDefinition optionCard ) 
+	{
+		// TODO Implement this method
+		return false;
+	}
+	
     @Override
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Bot)) {
-            return false;
-        }
-        Bot other = (Bot) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void paintElement(Graphics g, int baseX, int baseY, int size, int factor) {
+    public void paintElement(Graphics g, int baseX, int baseY, int size, int factor) 
+    {
         g.setColor(new Color(255, 0, 255, 255));
         switch (facingDirection) {
             case NORTH:
@@ -126,10 +91,10 @@ public class Bot extends AbstractMovingElement {
     }
 
     @Override
-    public void processMovement(Movement rrm)
+    public void processMovement( Movement movement )
     {
-        rrm.updateXAndYCoords(this);
-        this.setFacingDirection(rrm.getNewFacingDirection(this.getFacingDirection()));
+        updateLocation( movement );
+        facingDirection = movement.getNewFacingDirection( facingDirection );
     }
 
     public void processDeath()
@@ -139,8 +104,8 @@ public class Bot extends AbstractMovingElement {
 		currentLocation.setBot( null );
 		currentLocation = null;
 
-		this.lives--;
-        setDamage(2);
-        setFacingDirection(Direction.NORTH);
+		this.lives-- ;
+        this.damage = 2;
+        facingDirection = Direction.NORTH;
     }
 }

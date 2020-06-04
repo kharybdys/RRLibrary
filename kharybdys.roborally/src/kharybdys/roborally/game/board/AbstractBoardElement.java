@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import kharybdys.roborally.game.Bot;
 import kharybdys.roborally.game.Flag;
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
  * Contains information about walls & lasers and the business methods to handle those
@@ -45,7 +45,7 @@ public abstract class AbstractBoardElement implements BoardElement
     /**
      * The flag currently at this boardelement
      */
-    protected Flag flag = null;
+    protected AbstractMovingElement flag = null;
     
     /**
      * The lasers available on this boardelement (can be one vertical and one horizontal)
@@ -288,7 +288,10 @@ public abstract class AbstractBoardElement implements BoardElement
     	}
     	
     	this.bot = bot;
-    	bot.setLocation( this );
+    	if( bot != null )
+    	{
+    		bot.setLocation( this );
+    	}
     }
     
     /**
@@ -305,7 +308,10 @@ public abstract class AbstractBoardElement implements BoardElement
     	}
     	
     	this.flag = flag;
-    	flag.setLocation( this );
+    	if( flag != null )
+    	{
+    		flag.setLocation( this );
+    	}
     	
     }
     

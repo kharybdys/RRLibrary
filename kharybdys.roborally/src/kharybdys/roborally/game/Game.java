@@ -2,9 +2,14 @@ package kharybdys.roborally.game;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +24,9 @@ import kharybdys.roborally.game.definition.Direction;
  */
 public class Game {
 
+	public static final int DEFAULT_FACTOR = 4;
+	public static final int MAX_PHASE = 5 ;
+	
 	private int xSize;
 	private int ySize;
     private Collection<Flag> flags;
@@ -27,15 +35,21 @@ public class Game {
     // rootElement is the element at coordinates 0, 0
     private BoardElement rootElement;
     private Integer currentRound = 0;
+    private Integer currentPhase = 1;
+    private Integer id = 0;
+
 
 	private static final Logger logger = LoggerFactory.getLogger( Game.class );
 
-    public Game( int xSize, int ySize, 
+    public Game( Integer id, Integer currentRound, 
+    		int xSize, int ySize, 
     		BoardElement rootElement, 
     		Collection<Bot> bots, 
     		Collection<Flag> flags,
 			Collection<BoardElement> laserMounts ) 
     {
+    	this.id = id;
+    	this.currentRound = currentRound;
     	this.xSize = xSize;
     	this.ySize = ySize;
     	this.rootElement = rootElement;
@@ -43,47 +57,18 @@ public class Game {
     	this.flags = flags;
     	this.laserMounts = laserMounts;
     	
-    	for( Bot b : bots )
+    	for( AbstractMovingElement b : bots )
     	{
     		b.setGame( this );
     	}
     	
-    	for( Flag f : flags)
+    	for( AbstractMovingElement f : flags)
     	{
     		f.setGame( this );
     	}
 	}
 
-	public Dimension getDimension(int factor)
-    {
-        return new Dimension( xSize * factor * AbstractBoardElement.baseSize, ySize * factor * AbstractBoardElement.baseSize );
-    }
-
-    public void setFlags( Collection<Flag> flags )
-    {
-        this.flags = flags;
-    }
-
-    public void setBots( Collection<Bot> bots )
-    {
-    	this.bots = bots;
-        for (Bot b : bots)
-        {
-            b.setGame( this );
-        }
-    }
-
-    public boolean outOfYBounds( int y )
-    {
-        return y < 0 || y >= ySize;
-    }
-
-    public boolean outOfXBounds( int x )
-    {
-        return x < 0 || x >= xSize;
-    }
-
-    public BufferedImage getImage(int factor) 
+    public byte[] getImage(int factor) 
     {
         int w = ( xSize + 2 ) * factor * AbstractBoardElement.baseSize;
         int h = ( ySize + 2 ) * factor * AbstractBoardElement.baseSize;
@@ -93,13 +78,21 @@ public class Game {
         g.fillRect( 0, 0, w, h );
         this.paint( g, factor );
         g.dispose();
-        return bi;
+		try 
+		{
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write( bi, "png", baos );
+			return baos.toByteArray();
+		} 
+		catch (IOException e) 
+		{
+			logger.error( "Something went wrong writing the generated image to a byte array.", e );
+			return null;
+		}
     }
 
     public void paint( Graphics g, int factor ) 
     {
-        int w = xSize * factor * AbstractBoardElement.baseSize;
-        int h = ySize * factor * AbstractBoardElement.baseSize;
         BoardElement currentRowStart = rootElement;
         while( currentRowStart != null )
         {
@@ -112,18 +105,32 @@ public class Game {
             currentRowStart = currentRowStart.getNeighbour( Direction.SOUTH );
         }
         // paint flags first then bots so the bots actually show
-        for ( Flag flag : flags ) 
+        for ( AbstractMovingElement flag : flags ) 
         {
             flag.paint( g, factor );
         }
         // TODO, if a bot is on a flag, should the flag number be visible somewhere? But how then.
-        for ( Bot bot : bots ) 
+        for ( AbstractMovingElement bot : bots ) 
         {
             bot.paint( g, factor );
         }
     }
 
+	public void nextPhase() 
+	{
+		if( currentPhase == MAX_PHASE )
+		{
+			throw new IllegalStateException( "Cannot increase phase beyond " + MAX_PHASE + " on " + this );
+		}
+		this.currentPhase++ ;
+	}
 
+	public void nextRound() 
+	{
+		this.currentPhase = 1;
+		this.currentRound++ ;
+	}
+	
 	public Collection<AbstractMovingElement> getBotsAndFlags() 
 	{
         List<AbstractMovingElement> botsAndFlags = new ArrayList<AbstractMovingElement>();
@@ -132,13 +139,39 @@ public class Game {
         return botsAndFlags;
 	}
 
+	public Bot getBot( Integer botId ) 
+	{
+		Optional<Bot> bot = bots.stream().filter( b -> b.getId().equals( botId ) ).findFirst();
+		return bot.isPresent() ? bot.get() : null;
+	}
+	
 	public Collection<Bot> getBots() 
 	{
-		return bots ;
+		return bots;
 	}
 
+	public Collection<Flag> getFlags() 
+	{
+		return flags;
+	}
+
+	public Integer getCurrentPhase() 
+	{
+		return currentPhase;
+	}
+	public Integer getId() 
+	{
+		return id;
+	}
+	
 	public Integer getCurrentRound() 
 	{
 		return currentRound;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Game(" + id + ")";
 	}
 }

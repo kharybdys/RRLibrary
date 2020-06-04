@@ -8,7 +8,7 @@ import java.util.Map;
 import kharybdys.roborally.game.Bot;
 import kharybdys.roborally.game.Flag;
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
  * Contains available business methods that are shared amongst the elements

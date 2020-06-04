@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Collection;
 
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
  * This class represents a single-speed conveyor belt

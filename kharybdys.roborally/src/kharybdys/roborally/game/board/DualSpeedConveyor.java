@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import kharybdys.roborally.game.definition.Direction;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
  * Represents a dualspeed conveyor belt

@@ -66,6 +66,7 @@ Import-Package: com.dexels.navajo.adapter,
  org.w3c.dom
 Export-Package: kharybdys.roborally.adapters,
  kharybdys.roborally.functions
-Require-Bundle: com.dexels.navajo.function
+Require-Bundle: com.dexels.navajo.function,
+ slf4j.api
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: kharybdys.roborally.adapters

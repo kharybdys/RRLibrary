@@ -6,29 +6,17 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import kharybdys.roborally.game.board.AbstractMovingElement;
-import kharybdys.roborally.game.definition.Movement;
+import kharybdys.roborally.game.movement.Movement;
 
 /**
  * Models a flag
  */
 public class Flag extends AbstractMovingElement {
-    private Integer id = 0;
-    private Game game = null;
-
-    public Flag( Integer orderNumber ) 
+	
+    public Flag( Integer id, Integer orderNumber ) 
     {
-		super( orderNumber );
+		super( id, orderNumber );
 	}
-
-    @Override
-    public Game getGame() {
-        return game;
-    }
-
-    @Override
-    public void setGame(Game game) {
-        this.game = game;
-    }
 
     public void processDeath()
     {
@@ -36,6 +24,9 @@ public class Flag extends AbstractMovingElement {
 
 		currentLocation.setFlag( null );
 		currentLocation = null;
+		
+		// TODO: Flags resurrect at the end of a phase instead of at the end of a turn
+		// Cannot do it directly as bots on the archive spot should NOT touch this flag 
     }
     
     @Override
@@ -53,32 +44,13 @@ public class Flag extends AbstractMovingElement {
     }
 
     @Override
-    public void processMovement(Movement rrm)
+    public void processMovement( Movement movement )
     {
         // flags can only be moved by board movement:
-        if (rrm.getType() != Movement.RoboRallyMovementType.ROBOT_MOVEMENT)
+        if (movement.getType() != Movement.MovementType.ROBOT_MOVEMENT)
         {
-            rrm.updateXAndYCoords(this);
+            updateLocation( movement );
         }
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Flag)) {
-            return false;
-        }
-        Flag other = (Flag) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        // flags ignore turns
     }
 }

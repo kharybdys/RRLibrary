@@ -3,10 +3,11 @@ package kharybdys.roborally.game.board;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Collections;
-import java.util.Collection;
 
-import kharybdys.roborally.game.definition.Movement;
-import kharybdys.roborally.game.definition.Movement.RoboRallyMovementType;
+import kharybdys.roborally.game.movement.Movement;
+import kharybdys.roborally.game.movement.Movement.MovementType;
+
+import java.util.Collection;
 
 /**
  * Represents a generic implementation of a rotator board element. Only thing missing is the direction in which to turn (clockwise or counter-clockwise)
@@ -28,7 +29,7 @@ public abstract class AbstractRotator extends AbstractBoardElement
     @Override
     public Collection<Movement> getBoardMovements( int phase ) 
     {
-        return Collections.singletonList( new Movement(null, turnSteps, RoboRallyMovementType.ROTATOR, 0, 0) );
+        return Collections.singletonList( new Movement(null, turnSteps, MovementType.ROTATOR, 0, 0) );
     }
 
     /**
